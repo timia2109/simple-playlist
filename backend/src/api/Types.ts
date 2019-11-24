@@ -1,0 +1,1 @@
+export type ExpressHandler = (req: Express.Request, res: Express.Response) => any;
