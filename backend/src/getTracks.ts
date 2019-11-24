@@ -32,7 +32,8 @@ export async function getTracks(page: number) : Promise<EntryResult> {
     return {
         entries,
         page,
-        pages: Math.ceil( count / PAGE_LIMIT )
+        pages: Math.ceil( count / PAGE_LIMIT ),
+        pageSize: PAGE_LIMIT
     }
 }
 

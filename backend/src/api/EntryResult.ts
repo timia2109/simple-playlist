@@ -4,4 +4,5 @@ export type EntryResult = {
     entries: Entry[]
     page: number
     pages: number
+    pageSize: number
 }

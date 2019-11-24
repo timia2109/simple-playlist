@@ -1,0 +1,10 @@
+{
+    "title": "Simple Playlist",
+    "loadingApp": "Loading App...",
+    "searchQueryPlaceholder": "Insert Search",
+    "searchLoad": "Searching Tracks...",
+    "playOnSpotify": "Play on Spotify",
+    "lastVote": "Last vote ",
+    "play": "Play",
+    "stop": "Stop"
+}
