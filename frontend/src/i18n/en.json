@@ -20,5 +20,8 @@
     "playlistTitle": "Playlist Name",
     "startImport": "Start import",
     "importPending": "Import Playlist. Please do not close this page...",
-    "importSuccess": "Playlist successful imported!"
+    "importSuccess": "Playlist successful imported!",
+    "selectPlaylist": "Select Playlist",
+    "clearPlaylist": "Clear Playlist first",
+    "allowDuplicates": "Allow duplicates"
 }

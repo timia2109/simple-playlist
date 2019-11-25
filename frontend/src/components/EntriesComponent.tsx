@@ -3,7 +3,7 @@ import { AFetchComponent, AFetchStates } from "./AFetchComponent";
 import { EntryResult } from "../../../backend/src/api/EntryResult";
 import { DefaultComponentProps } from "../DefaultComponentProps";
 import API from "../API";
-import { ListGroup } from "reactstrap";
+import { ListGroup, Badge } from "reactstrap";
 import { EntryComponent } from "./EntryComponent";
 import { PageSelectorComponent } from "./PageSelectorComponent";
 import moment from "moment";
@@ -68,7 +68,16 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
         let entriesResult = this.state.entriesResult!;
         return <Translation>
             {(t) => <>
-                <h1>{t("votes")}</h1>
+                <h1>
+                    {t("votes")}
+                    <Badge
+                        hidden={this.state.entriesResult === undefined}
+                        color="primary"
+                        className="ml-3"
+                    >
+                        {this.state.entriesResult!.items}
+                    </Badge>
+                </h1>
                 <PageSelectorComponent
                     currentStart={entriesResult.offset}
                     elements={entriesResult.items}

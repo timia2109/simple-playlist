@@ -4,8 +4,9 @@ import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, FormGroup, Form, Al
 import SpotifyWebApi from "spotify-web-api-node";
 import { Translation } from "react-i18next";
 import { LoadingComponent } from "./LoadingComponent";
-import { filterPlaylists, ProgressState } from "../PlaylistImporterUtils";
 import { CreatePlaylistComponent } from "./importPlaylist/CreatePlaylistComponent";
+import { InsertPlaylistComponent } from "./importPlaylist/InsertPlaylistComponent";
+import { SpotifyUtils, ProgressState } from "../logic/SpotifyUtils";
 
 export interface ImportDialogProps extends DefaultComponentProps {
     isOpen: boolean,
@@ -13,13 +14,11 @@ export interface ImportDialogProps extends DefaultComponentProps {
 }
 
 interface ImportDialogStates {
-    trackIds?: string[]
     userPlaylists?: SpotifyApi.PlaylistObjectSimplified[]
     loading: boolean,
     mode: "Insert" | "Create",
     progressState: ProgressState | undefined
-    spotifyApi: SpotifyWebApi
-    me?: SpotifyApi.CurrentUsersProfileResponse
+    spotifyUtils: SpotifyUtils;
 }
 
 export default class ImportDialogComponent extends React.Component<ImportDialogProps, ImportDialogStates> {
@@ -34,11 +33,12 @@ export default class ImportDialogComponent extends React.Component<ImportDialogP
             loading: false,
             mode: "Insert",
             progressState: undefined,
-            spotifyApi
+            spotifyUtils: new SpotifyUtils(spotifyApi)
         };
 
         this.onModeChange = this.onModeChange.bind(this);
         this.onImportStateChange = this.onImportStateChange.bind(this);
+        this.state.spotifyUtils.bindLoadingHandler(this.onImportStateChange);
     }
 
     componentDidUpdate(prevProps: ImportDialogProps) {
@@ -52,40 +52,18 @@ export default class ImportDialogComponent extends React.Component<ImportDialogP
             loading: true
         });
 
-        let userPlaylists: SpotifyApi.PlaylistObjectSimplified[] = [];
-
-        let offset = 0;
-        let lastResult: SpotifyApi.ListOfUsersPlaylistsResponse;
-        do {
-            lastResult = (await this.state.spotifyApi.getUserPlaylists({
-                offset
-            })).body;
-
-            userPlaylists = userPlaylists.concat(
-                lastResult.items
-            );
-
-            offset += lastResult.limit;
-        } while (lastResult.offset < lastResult.total);
-
-        const [me, trackIds] = await Promise.all([
-            this.state.spotifyApi.getMe(),
-            this.props.api.getTrackIds()
+        const [trackIds, userPlaylists] = await Promise.all([
+            this.props.api.getTrackIds(),
+            this.state.spotifyUtils.getPlaylists(),
+            this.state.spotifyUtils.loadMe(),
         ]);
 
-        userPlaylists = filterPlaylists(userPlaylists, me.body);
+        this.state.spotifyUtils.bindTrackUris(trackIds);
 
         this.setState({
-            trackIds,
             userPlaylists,
             loading: false,
-            me: me.body,
             progressState: "Nothing"
-        });
-
-        console.log({
-            trackIds,
-            userPlaylists
         });
     }
 
@@ -95,10 +73,6 @@ export default class ImportDialogComponent extends React.Component<ImportDialogP
 
     onImportStateChange(progressState: ProgressState) {
         this.setState({ progressState });
-    }
-
-    renderInsert() {
-        return <>Insert</>;
     }
 
     render() {
@@ -111,7 +85,7 @@ export default class ImportDialogComponent extends React.Component<ImportDialogP
                     <ModalBody>
                         {this.state.loading && <LoadingComponent />}
                         {this.state.progressState === "Nothing" && <>
-                            <ButtonGroup>
+                            <ButtonGroup className="mb-3">
                                 <Button onClick={() => this.onModeChange("Insert")} active={this.state.mode === "Insert"} color="primary">
                                     {t("insertToPlaylist")}
                                 </Button>
@@ -121,12 +95,12 @@ export default class ImportDialogComponent extends React.Component<ImportDialogP
                             </ButtonGroup>
                             {this.state.mode === "Create" &&
                                 <CreatePlaylistComponent
-                                    api={this.state.spotifyApi}
-                                    trackIds={this.state.trackIds!}
-                                    loadingHandler={this.onImportStateChange}
-                                    me={this.state.me!}
+                                    spotifyUtils={this.state.spotifyUtils}
                                 />}
-                            {this.state.mode === "Insert" && <this.renderInsert />}
+                            {this.state.mode === "Insert" && <InsertPlaylistComponent
+                                spotifyUtils={this.state.spotifyUtils}
+                                playlists={this.state.userPlaylists!}
+                            />}
                         </>}
                         {this.state.progressState === "Pending" &&
                             <LoadingComponent title={t("importPending")} />

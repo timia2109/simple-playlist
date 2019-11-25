@@ -15,7 +15,7 @@ export default function ImportPlaylistComponent(props: DefaultComponentProps) {
 
     if (hasUserAccessToken) {
         return <>
-            <Button color="success" onClick={() => setModalOpen(true)} hidden={isModalOpen} className="mb-3">
+            <Button color="success" onClick={() => setModalOpen(true)} className="mb-3">
                 <FontAwesomeIcon icon={faSpotify} />
                 {t("import")}
             </Button>

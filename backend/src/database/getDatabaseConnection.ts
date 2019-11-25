@@ -13,10 +13,13 @@ const connect = async () => {
         useUnifiedTopology: true
     } as any);
     await client.connect();
+
+    const dbName = process.env.DATABASE_NAME || "simple-playlist";
+    const collectionName = process.env.COLLECTION_NAME || "entries"
     
-    database = client.db("simple-playlist");
-    await database.createCollection("entries");
-    collection = database.collection<Entry>("entries");
+    database = client.db(dbName);
+    await database.createCollection(collectionName);
+    collection = database.collection<Entry>(collectionName);
     await collection.createIndex("id", {
         unique: true,
         name: "spotifyIdIndex"
@@ -26,7 +29,7 @@ const connect = async () => {
 }
 
 /**
- * Gets the Collection for the App
+ * Gets the MongoDB Collection for the App
  */
 export default async function getCollection() : Promise<Collection<Entry>> {
     

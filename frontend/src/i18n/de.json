@@ -11,5 +11,17 @@
     "votes": "Hinzugefügte Lieder",
     "search": "Suchen",
     "add": "Hinzufügen",
-    "added": "Hinzugefügt"
+    "added": "Hinzugefügt",
+    "login": "Melde dich an um zu importieren",
+    "import": "Diese Playlist importieren",
+    "importTitle": "Importiere Playlist",
+    "insertToPlaylist": "Existierende Playlist",
+    "createPlaylist": "Neue Playlist",
+    "playlistTitle": "Playlist Name",
+    "startImport": "Starte Import",
+    "importPending": "Importiere Playlist. Bitte schließe diese Seite nicht...",
+    "importSuccess": "Playlist erfolgreich importiert!",
+    "selectPlaylist": "Playlist auswählen",
+    "clearPlaylist": "Alle existierenden Tracks löschen",
+    "allowDuplicates": "Doppelte Tracks erlauben"
 }
