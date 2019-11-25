@@ -1,19 +1,25 @@
 import { DefaultComponentProps } from "../DefaultComponentProps";
 import React from "react";
-import { FormGroup, Label, Input, InputGroupAddon, Button, InputGroup, ListGroup } from "reactstrap";
+import { Input, InputGroupAddon, Button, InputGroup, ListGroup } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faPlusCircle, faCheck, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import SpotifyWebApi from "spotify-web-api-node";
 import { LoadingComponent } from "./LoadingComponent";
 import { EntryComponent } from "./EntryComponent";
 import { Translation } from 'react-i18next';
 import "../i18n/i18n";
+import { PageSelectorComponent } from "./PageSelectorComponent";
+
+const SEARCH_LIMIT = 20;
 
 interface SeekStates {
     query: string,
     results: SpotifyApi.TrackObjectFull[],
     loading: boolean,
     currentPlayingEntry: SpotifyApi.TrackObjectFull | undefined;
+    page: number,
+    searchResults: number,
+    alreadyVoted: Set<string>
 }
 
 export default class SeekComponent extends React.Component<DefaultComponentProps, SeekStates> {
@@ -27,7 +33,10 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
             query: "",
             results: [],
             loading: false,
-            currentPlayingEntry: undefined
+            currentPlayingEntry: undefined,
+            page: 0,
+            searchResults: 0,
+            alreadyVoted: new Set()
         };
 
         this.onValueChange = this.onValueChange.bind(this);
@@ -61,19 +70,32 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
 
     async onAddClick(trackId: string) {
         await this.props.api.submitTrack(trackId);
-        // TODO: Throw Notification
+
+        this.state.alreadyVoted.add(trackId);
+        this.setState(() => {
+            return {
+                alreadyVoted: this.state.alreadyVoted
+            }
+        });
+        this.props.api.notifyEntriesChange();
     }
 
-    async onSearchRequest() {
+    async onSearchRequest(page: number = 0) {
         this.setState({ loading: true });
 
         let results = await this.spotifyApi.searchTracks(this.state.query, {
-            market: "DE"
+            market: "DE",
+            limit: SEARCH_LIMIT,
+            offset: page
         });
+
+        let tracks = results.body.tracks!;
 
         this.setState({
             loading: false,
-            results: results.body.tracks!.items
+            results: tracks.items,
+            page,
+            searchResults: tracks.total
         });
     }
 
@@ -82,8 +104,8 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
         return <Translation>
             {
                 (t) => <>
-                    <h1>Add Track</h1>
-                    <InputGroup>
+                    <h1>{t("addTracks")}</h1>
+                    <InputGroup className="mb-3">
                         <Input
                             type="text"
                             value={this.state.query}
@@ -91,10 +113,10 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
                             placeholder={t("searchQueryPlaceholder")}
                         />
                         <InputGroupAddon addonType="append">
-                            <Button color="success" onClick={this.onSearchRequest}>
+                            <Button color="success" onClick={() => this.onSearchRequest()}>
                                 <FontAwesomeIcon icon={faSearch} />
-                                Search
-                        </Button>
+                                {t("search")}
+                            </Button>
                         </InputGroupAddon>
                     </InputGroup>
                     {
@@ -103,21 +125,44 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
                     }
                     {
                         !this.state.loading && this.state.results.length > 0 &&
-                        <ListGroup>
-                            {this.state.results.map(t =>
-                                <EntryComponent
-                                    currentTrack={this.state.currentPlayingEntry}
-                                    track={t}
-                                    key={t.id}
-                                    onPlayRequest={this.onPlayTrack}
-                                >
-                                    <Button color="primary" onClick={() => this.onAddClick(t.id)}>
-                                        <FontAwesomeIcon icon={faPlusCircle} />
-                                        Add
-                                </Button>
-                                </EntryComponent>
-                            )}
-                        </ListGroup>
+                        <>
+                            <PageSelectorComponent
+                                currentStart={this.state.page}
+                                elements={this.state.searchResults}
+                                onPageChange={this.onSearchRequest}
+                                pageSize={SEARCH_LIMIT}
+                            />
+                            <ListGroup>
+                                {this.state.results.map(e =>
+                                    <EntryComponent
+                                        currentTrack={this.state.currentPlayingEntry}
+                                        track={e}
+                                        key={e.id}
+                                        onPlayRequest={this.onPlayTrack}
+                                    >
+                                        {this.state.alreadyVoted.has(e.id) &&
+                                            <Button color="primary" disabled>
+                                                <FontAwesomeIcon icon={faCheckCircle} />
+                                                {t("added")}
+                                            </Button>
+                                        }
+                                        {
+                                            !this.state.alreadyVoted.has(e.id) && <Button color="primary" onClick={() => this.onAddClick(e.id)}>
+                                                <FontAwesomeIcon icon={faPlusCircle} />
+                                                {t("add")}
+                                            </Button>
+                                        }
+
+                                    </EntryComponent>
+                                )}
+                            </ListGroup>
+                            <PageSelectorComponent
+                                currentStart={this.state.page}
+                                elements={this.state.searchResults}
+                                onPageChange={this.onSearchRequest}
+                                pageSize={SEARCH_LIMIT}
+                            />
+                        </>
                     }
                 </>
             }

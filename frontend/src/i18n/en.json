@@ -6,5 +6,19 @@
     "playOnSpotify": "Play on Spotify",
     "lastVote": "Last vote ",
     "play": "Play",
-    "stop": "Stop"
+    "stop": "Stop",
+    "addTracks": "Add Tracks",
+    "votes": "Votes",
+    "search": "Search",
+    "add": "Add",
+    "added": "Added",
+    "login": "Login to Spotify to save the playlist",
+    "import": "Import this playlist to Spotify",
+    "importTitle": "Import Playlist",
+    "insertToPlaylist": "Existing Playlist",
+    "createPlaylist": "Create Playlist",
+    "playlistTitle": "Playlist Name",
+    "startImport": "Start import",
+    "importPending": "Import Playlist. Please do not close this page...",
+    "importSuccess": "Playlist successful imported!"
 }

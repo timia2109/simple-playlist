@@ -2,11 +2,14 @@ import { EntryResult } from "../../backend/src/api/EntryResult";
 import { SpotifyAppToken } from "../../backend/src/getSpotifyAppToken";
 import { UserToken } from "../../backend/src/database/UserToken";
 import Cookies from "js-cookie";
+import IEntriesChangeListener from "./IEntriesChangeListener";
 
 // More are not nessessary on this app
 export type Method = "GET" | "POST";
 
 export default class API {
+
+    private entriesChangeListener: IEntriesChangeListener[] = [];
 
     private async fetch<TBody, TResponse>(uri: string, method: Method, body?: TBody, query?: URLSearchParams): Promise<TResponse> {
         let requestInit: RequestInit = {
@@ -66,6 +69,18 @@ export default class API {
 
     getLoginUrl() : string {
         return "/api/login";
+    }
+
+    attach(iEntriesChangeListener: IEntriesChangeListener) : void {
+        this.entriesChangeListener.push(iEntriesChangeListener);
+    }
+
+    detach(iEntriesChangeListener: IEntriesChangeListener) : void {
+        this.entriesChangeListener = this.entriesChangeListener.filter(l => l !== iEntriesChangeListener);
+    }
+
+    notifyEntriesChange() : void {
+        this.entriesChangeListener.forEach(l => l.reloadEntries());
     }
 
 }

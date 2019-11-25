@@ -6,5 +6,10 @@
     "playOnSpotify": "Auf Spotify abspielen",
     "lastVote": "Letzte Abstimmung ",
     "play": "Play",
-    "stop": "Stop"
+    "stop": "Stop",
+    "addTracks": "Lieder hinzufügen",
+    "votes": "Hinzugefügte Lieder",
+    "search": "Suchen",
+    "add": "Hinzufügen",
+    "added": "Hinzugefügt"
 }

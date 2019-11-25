@@ -1,9 +1,9 @@
 import getCollection from "./database/getDatabaseConnection";
 import { EntryResult } from "./api/EntryResult";
 
-const PAGE_LIMIT = 25;
+const PAGE_LIMIT = 20;
 
-export async function getTracks(page: number) : Promise<EntryResult> {
+export async function getTracks(offset: number) : Promise<EntryResult> {
     let collection = await getCollection();
     let count = await collection.countDocuments();
     let entries = await collection
@@ -21,7 +21,7 @@ export async function getTracks(page: number) : Promise<EntryResult> {
                 }
             },
             {
-                $skip: page * PAGE_LIMIT
+                $skip: offset
             },
             {
                 $limit: PAGE_LIMIT
@@ -31,9 +31,9 @@ export async function getTracks(page: number) : Promise<EntryResult> {
 
     return {
         entries,
-        page,
-        pages: Math.ceil( count / PAGE_LIMIT ),
-        pageSize: PAGE_LIMIT
+        items: count,
+        offset,
+        size: PAGE_LIMIT
     }
 }
 
@@ -43,11 +43,11 @@ export async function getAllTrackIds() : Promise<string[]> {
         .aggregate([
             {
                 $project: {
-                    id: 1
+                    uri: 1
                 }
             }
         ])
         .toArray();
 
-    return entries.map(o => o.id);
+    return entries.map(o => o.uri);
 }
