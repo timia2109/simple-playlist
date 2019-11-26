@@ -108,7 +108,10 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
                                             track={e}
                                             currentTrack={this.state.currentPlayingEntry}
                                             onPlayRequest={this.onPlayTrack}
-                                            info={t("lastVote") + moment(e.lastVote).format("DD.MM.YYYY")}
+                                            info={[
+                                                t("lastVote", { date: moment(e.lastVote).format(t("dateFormat")) }),
+                                                t("nVotes", { votes: e.votes.length.toString() })
+                                            ]}
                                         >
                                             {this.props.api.info.isAdmin && e.banned !== true &&
                                                 <Button color="danger" onClick={() => this.props.api.deleteTrack(e.id)}>

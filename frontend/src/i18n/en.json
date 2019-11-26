@@ -5,7 +5,7 @@
     "searchQueryPlaceholder": "Insert Search",
     "searchLoad": "Searching Tracks...",
     "playOnSpotify": "Play on Spotify",
-    "lastVote": "Last vote ",
+    "lastVote": "Last vote: {{date}}",
     "play": "Play",
     "stop": "Stop",
     "addTracks": "Add Tracks",
@@ -25,5 +25,7 @@
     "selectPlaylist": "Select Playlist",
     "clearPlaylist": "Clear Playlist first",
     "allowDuplicates": "Allow duplicates",
-    "reload": "Reload List"
+    "reload": "Reload List",
+    "dateFormat": "DD.MM.YYYY hh:mm:ss a",
+    "nVotes": "{{votes}} votes"
 }

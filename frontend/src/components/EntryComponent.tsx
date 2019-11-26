@@ -3,16 +3,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons/faSpotify";
 import { TrackPlayRequestHandler, PlayTrackComponent } from "./PlayTrackComponent";
-import { ButtonGroup } from "reactstrap";
+import { ButtonGroup, Badge, ListGroupItem } from "reactstrap";
 import { useTranslation } from 'react-i18next';
 import "../i18n/i18n";
 
 
-export interface EntryProps  {
+export interface EntryProps {
     track: SpotifyApi.TrackObjectFull;
     onPlayRequest?: TrackPlayRequestHandler;
     currentTrack?: SpotifyApi.TrackObjectFull;
-    info? : string
+    info?: string[]
 }
 
 export function EntryComponent(props: React.PropsWithChildren<EntryProps>) {
@@ -29,7 +29,7 @@ export function EntryComponent(props: React.PropsWithChildren<EntryProps>) {
         .join(", ");
 
     return (
-        <li className="list-group-item">
+        <ListGroupItem>
             <div className="media">
                 <img src={track.album.images[0].url} width="64" height="64" style={imageStyle} alt="Cover" />
                 <div className="media-body">
@@ -44,21 +44,23 @@ export function EntryComponent(props: React.PropsWithChildren<EntryProps>) {
                         <FontAwesomeIcon icon={faUser} />
                         {artists}
                     </div>
-
-                    <div>
-                        {props.info || ""}
-                    </div>
-
-                    <ButtonGroup>
-                        {props.children}
-                        {props.onPlayRequest !== undefined && track.preview_url && <PlayTrackComponent track={track} onPlayRequest={props.onPlayRequest} playing={props.currentTrack !== undefined && props.currentTrack.id === props.track.id} />}
-                        <a href={track.external_urls.spotify} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
-                            <FontAwesomeIcon icon={faSpotify} />
-                            {t("playOnSpotify")}
-                        </a>
-                    </ButtonGroup>
                 </div>
             </div>
-        </li>
+            <div>
+                {props.info && props.info.map((t, i) => <Badge pill key={i} className="mr-1">
+                    {t}
+                </Badge>
+                )}
+            </div>
+
+            <ButtonGroup>
+                {props.children}
+                {props.onPlayRequest !== undefined && track.preview_url && <PlayTrackComponent track={track} onPlayRequest={props.onPlayRequest} playing={props.currentTrack !== undefined && props.currentTrack.id === props.track.id} />}
+                <a href={track.external_urls.spotify} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
+                    <FontAwesomeIcon icon={faSpotify} />
+                    {t("playOnSpotify")}
+                </a>
+            </ButtonGroup>
+        </ListGroupItem>
     );
 }
