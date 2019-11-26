@@ -105,7 +105,7 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
             {
                 (t) =>
                     <Card className="mb-3">
-                        <CardHeader tag="a3">
+                        <CardHeader tag="h3">
                             {t("addTracks")}
                         </CardHeader>
                         <CardBody>

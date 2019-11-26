@@ -73,7 +73,7 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
         return <Translation>
             {(t) =>
                 <Card>
-                    <CardHeader tag="a3">
+                    <CardHeader tag="h3">
                         {t("votes")}
                         <Badge
                             hidden={this.state.entriesResult === undefined}
