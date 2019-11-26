@@ -19,9 +19,7 @@ export default class API {
             method
         };
 
-        let baseUrl = window.location.protocol + "//" + window.location.host + "/";
-
-        let url = new URL(uri, baseUrl);
+        let url = new URL(uri, window.location.href);
 
         // Append Query Params
         if (query) {
@@ -53,22 +51,22 @@ export default class API {
     getTracks(page: number): Promise<EntryResult> {
         let searchParams = new URLSearchParams();
         searchParams.set("page", page.toString());
-        return this.fetch("/api/tracks", "GET", undefined, searchParams);
+        return this.fetch("api/tracks", "GET", undefined, searchParams);
     }
 
     getTrackIds() : Promise<string[]> {
-        return this.fetch("/api/tracks/ids", "GET");
+        return this.fetch("api/tracks/ids", "GET");
     }
 
     submitTrack(spotifyTrackId: string) : Promise<EntryResult> {
         let body = {
             trackId: spotifyTrackId
         };
-        return this.fetch("/api/submit", "POST", body);
+        return this.fetch("api/submit", "POST", body);
     }
 
     getSpotifyAccessToken() : Promise<SpotifyAppToken> {
-        return this.fetch("/api/getSpotifyToken", "GET");
+        return this.fetch("api/getSpotifyToken", "GET");
     }
 
     getUserToken() : UserToken | undefined {
@@ -83,7 +81,7 @@ export default class API {
     }
 
     getLoginUrl() : string {
-        return "/api/login";
+        return "api/login";
     }
 
     attach(iEntriesChangeListener: IEntriesChangeListener) : void {
