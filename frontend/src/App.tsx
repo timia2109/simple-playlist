@@ -2,7 +2,7 @@ import React from 'react';
 import { SpotifyAppToken } from '../../backend/src/getSpotifyAppToken';
 import API from './API';
 import moment from 'moment';
-import { Container, Row, Col, Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
+import { Container, Row, Col, Navbar, NavbarBrand, Nav, NavItem, NavLink, Alert } from 'reactstrap';
 import { LoadingComponent } from './components/LoadingComponent';
 import { EntriesComponent } from './components/EntriesComponent';
 import SeekComponent from './components/SeekComponent';
@@ -32,7 +32,10 @@ export default class App extends React.Component<{}, AppStates> {
     }
 
     private async loadSpotifyToken() {
-        let token = await this.state.api.getSpotifyAccessToken();
+        let [token] = await Promise.all([
+            this.state.api.getSpotifyAccessToken(),
+            this.state.api.init()
+        ]);
 
         this.setState({
             spotifyAppToken: token
@@ -47,11 +50,16 @@ export default class App extends React.Component<{}, AppStates> {
     }
 
     render() {
+        if (this.state.spotifyAppToken === undefined) {
+            return <Translation>
+                {t => <LoadingComponent title={t("loadingApp")} />}
+            </Translation>
+        }
         return <Translation>
             {
                 (t) => <>
                     <Navbar color="light" light>
-                        <NavbarBrand>{t("title")}</NavbarBrand>
+                        <NavbarBrand>{this.state.api.info.title}</NavbarBrand>
                         <Nav className="mr-auto" navbar>
                             <NavItem>
                                 <NavLink href="https://github.com/timia2109/simple-playlist" target="_blank" rel="noopener noreferrer">
@@ -61,15 +69,17 @@ export default class App extends React.Component<{}, AppStates> {
                         </Nav>
                     </Navbar>
                     <Container className="mt-3">
-                        {this.state.spotifyAppToken === undefined && <LoadingComponent title={t("loadingApp")} />}
-                        {this.state.spotifyAppToken !== undefined && <Row>
+                        <Row>
                             <Col md="6">
-                                <SeekComponent api={this.state.api} spotifyToken={this.state.spotifyAppToken} />
+                                <SeekComponent api={this.state.api} spotifyToken={this.state.spotifyAppToken!} />
                             </Col>
                             <Col md="6">
-                                <EntriesComponent api={this.state.api} spotifyToken={this.state.spotifyAppToken} />
+                                {this.state.api.info.info.map((i,j) =>
+                                    <Alert color="primary" key={j}>{i}</Alert>
+                                )}
+                                <EntriesComponent api={this.state.api} spotifyToken={this.state.spotifyAppToken!} />
                             </Col>
-                        </Row>}
+                        </Row>
                     </Container>
                 </>
             }

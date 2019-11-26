@@ -1,6 +1,7 @@
 {
     "title": "Simple Playlist",
     "loadingApp": "Loading App...",
+    "loading": "Loading... Please wait...",
     "searchQueryPlaceholder": "Insert Search",
     "searchLoad": "Searching Tracks...",
     "playOnSpotify": "Play on Spotify",

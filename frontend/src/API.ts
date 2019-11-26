@@ -3,6 +3,8 @@ import { SpotifyAppToken } from "../../backend/src/getSpotifyAppToken";
 import { UserToken } from "../../backend/src/database/UserToken";
 import Cookies from "js-cookie";
 import IEntriesChangeListener from "./IEntriesChangeListener";
+import {AppInfo} from "../../backend/src/api/AppInfo";
+import moment from "moment";
 
 // More are not nessessary on this app
 export type Method = "GET" | "POST";
@@ -10,6 +12,7 @@ export type Method = "GET" | "POST";
 export default class API {
 
     private entriesChangeListener: IEntriesChangeListener[] = [];
+    private _info?: AppInfo;
 
     private async fetch<TBody, TResponse>(uri: string, method: Method, body?: TBody, query?: URLSearchParams): Promise<TResponse> {
         let requestInit: RequestInit = {
@@ -39,6 +42,14 @@ export default class API {
         return await response.json();
     }
 
+    get info() : AppInfo {
+        return this._info!;
+    }
+
+    async init() : Promise<void> {
+        this._info = await this.fetch("/api/info", "GET");
+    }
+
     getTracks(page: number): Promise<EntryResult> {
         let searchParams = new URLSearchParams();
         searchParams.set("page", page.toString());
@@ -63,7 +74,11 @@ export default class API {
     getUserToken() : UserToken | undefined {
         let cookieContent = Cookies.get("userToken");
         if (cookieContent !== undefined) {
-            return JSON.parse(cookieContent);
+            const userToken = JSON.parse(cookieContent) as UserToken;
+            // Only if token is still valid
+            if (moment().isBefore(userToken.expires_on)) {
+                return userToken;
+            }
         }
     }
 

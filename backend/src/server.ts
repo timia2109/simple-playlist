@@ -9,10 +9,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const port = process.env.PORT;
+const port = parseInt(process.env.PORT);
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const url = process.env.URL;
+// Branding
+const appInfo = {
+    title: process.env.TITLE || "Simple Playlist",
+    info: (process.env.INFO && process.env.INFO.split("\n").map(i => i.trim()))
+        || []
+};
 
 const app = express();
 //app.use(cors());
@@ -42,7 +48,7 @@ app.post("/api/submit", submitTrack(clientId, clientSecret));
 app.get("/api/getSpotifyToken", async (req, res) => {
     res.send(
         await getSpotifyAppToken(clientId, clientSecret)
-    );
+    )
 });
 
 // Login the User
@@ -51,7 +57,15 @@ app.get("/api/login", loginHandler(clientId, clientSecret, url));
 // Login okay
 app.get("/api/login_callback", loginSuccessHandler(clientId, clientSecret, url));
 
-app.listen(port, () => {
-    console.log(`Listen on Port ${port}`);
-    console.log(`    with Root URI: ${url}`)
+// App Info & Branding
+app.get("/api/info", (req, res) => {
+    res.send(appInfo);
 });
+
+app.listen(
+    port,
+    process.env.HOST || "0.0.0.0",
+    () => {
+        console.log(`Listen on Port ${port}`);
+        console.log(`    with Root URI: ${url}`)
+    });
