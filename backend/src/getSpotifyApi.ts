@@ -1,18 +1,24 @@
 import SpotifyWebApi = require("spotify-web-api-node");
 import getSpotifyAppToken from "./getSpotifyAppToken";
+import { getEnviroment } from "./Enviroment";
 
-export default async function getSpotifyApi(clientId: string, clientSecret: string, redirectUri?: string) : Promise<SpotifyWebApi> {
-    let token = await getSpotifyAppToken(clientId, clientSecret);
+const env = getEnviroment();
+
+export default async function getSpotifyApi() : Promise<SpotifyWebApi> {
+    let token = await getSpotifyAppToken();
+    let redirectUri = env.url;
     if (redirectUri) {
         let append = "api/login_callback";
         if (redirectUri[redirectUri.length-1] !== "/") {
-            append += "/";
+            append = "/" + append;
         }
         redirectUri += append;
     }
 
     let api = new SpotifyWebApi({
-        clientId, clientSecret, redirectUri
+        clientId: env.clientId, 
+        clientSecret: env.clientSecret, 
+        redirectUri
     });
     api.setAccessToken(token.access_token);
     return api;

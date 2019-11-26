@@ -1,5 +1,6 @@
 import moment from "moment";
 import fetch from "node-fetch";
+import { getEnviroment } from "./Enviroment";
 
 export type SpotifyAppToken = {
     access_token: string;
@@ -7,10 +8,11 @@ export type SpotifyAppToken = {
 }
 
 let token : SpotifyAppToken | undefined = undefined;
+const env = getEnviroment();
 
-export default async function getSpotifyAppToken(clientId: string, clientSec: string) : Promise<SpotifyAppToken> {
+export default async function getSpotifyAppToken() : Promise<SpotifyAppToken> {
     if (token === undefined || moment().isSameOrAfter(token.expires_on)) {
-        let auth = (Buffer.from(clientId + ":" + clientSec).toString("base64"));
+        let auth = (Buffer.from(env.clientId + ":" + env.clientSecret).toString("base64"));
         
         let body = new URLSearchParams();
         body.set("grant_type", "client_credentials");

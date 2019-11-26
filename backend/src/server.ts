@@ -6,24 +6,19 @@ import { getTracks, getAllTrackIds } from "./getTracks";
 import submitTrack from "./api/submitTrack";
 import { loginHandler, loginSuccessHandler } from "./api/loginHandlers";
 import dotenv from "dotenv";
+import { getEnviroment } from "./Enviroment";
 
 dotenv.config();
 
-const port = parseInt(process.env.PORT);
-const clientId = process.env.CLIENT_ID;
-const clientSecret = process.env.CLIENT_SECRET;
-const url = process.env.URL;
-// Branding
-const appInfo = {
-    title: process.env.TITLE || "Simple Playlist",
-    info: (process.env.INFO && process.env.INFO.split("\n").map(i => i.trim()))
-        || []
-};
+const env = getEnviroment();
 
 const app = express();
-//app.use(cors());
 app.use(json());
 app.use(cookieParser());
+app.use((req,res,next)=> {
+    res.header("X-Powered-By", "timia2109/simple-playlist");
+    next();
+});
 
 if (process.env.FILES) {
     app.use(staticFiles(process.env.FILES));
@@ -42,30 +37,30 @@ app.get("/api/tracks/ids", async (req, res) => {
 });
 
 // Submit any Track
-app.post("/api/submit", submitTrack(clientId, clientSecret));
+app.post("/api/submit", submitTrack());
 
 // Get the App Access Token (User)
 app.get("/api/getSpotifyToken", async (req, res) => {
     res.send(
-        await getSpotifyAppToken(clientId, clientSecret)
+        await getSpotifyAppToken()
     )
 });
 
 // Login the User
-app.get("/api/login", loginHandler(clientId, clientSecret, url));
+app.get("/api/login", loginHandler());
 
 // Login okay
-app.get("/api/login_callback", loginSuccessHandler(clientId, clientSecret, url));
+app.get("/api/login_callback", loginSuccessHandler());
 
 // App Info & Branding
 app.get("/api/info", (req, res) => {
-    res.send(appInfo);
+    res.send({});
 });
 
 app.listen(
-    port,
-    process.env.HOST || "0.0.0.0",
+    env.port,
+    env.host,
     () => {
-        console.log(`Listen on Port ${port}`);
-        console.log(`    with Root URI: ${url}`)
+        console.log(`Listen on Port ${env.port}`);
+        console.log(`    with Root URI: ${env.url}`)
     });

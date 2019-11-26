@@ -24,5 +24,6 @@
     "importSuccess": "Playlist erfolgreich importiert!",
     "selectPlaylist": "Playlist auswählen",
     "clearPlaylist": "Alle existierenden Tracks löschen",
-    "allowDuplicates": "Doppelte Tracks erlauben"
+    "allowDuplicates": "Doppelte Tracks erlauben",
+    "reload": "Neu laden"
 }

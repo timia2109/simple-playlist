@@ -4,8 +4,10 @@ import getSpotifyApi from "../getSpotifyApi";
 import { Entry } from "../database/Entry";
 import { getTracks } from "../getTracks";
 import { RequestHandler } from "express";
+import { getEnviroment } from "../Enviroment";
 
-export default function submitTrack(clientId: string, clientSecret: string) : RequestHandler {
+export default function submitTrack() : RequestHandler {
+    const env = getEnviroment();
     const handler : RequestHandler = async (req, res) => {
         let trackId = req.body.trackId;
         let vote: Vote = {
@@ -27,7 +29,7 @@ export default function submitTrack(clientId: string, clientSecret: string) : Re
             });
         }
         else {
-            let api = await getSpotifyApi(clientId, clientSecret);
+            let api = await getSpotifyApi(env.clientId, env.clientSecret);
             let spotifyTrack = await api.getTrack(trackId);
     
             // Hide Market Fields

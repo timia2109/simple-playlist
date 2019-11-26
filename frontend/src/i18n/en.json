@@ -24,5 +24,6 @@
     "importSuccess": "Playlist successful imported!",
     "selectPlaylist": "Select Playlist",
     "clearPlaylist": "Clear Playlist first",
-    "allowDuplicates": "Allow duplicates"
+    "allowDuplicates": "Allow duplicates",
+    "reload": "Reload List"
 }

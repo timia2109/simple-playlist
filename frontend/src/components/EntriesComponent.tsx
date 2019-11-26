@@ -3,7 +3,7 @@ import { AFetchComponent, AFetchStates } from "./AFetchComponent";
 import { EntryResult } from "../../../backend/src/api/EntryResult";
 import { DefaultComponentProps } from "../DefaultComponentProps";
 import API from "../API";
-import { ListGroup, Badge } from "reactstrap";
+import { ListGroup, Badge, ButtonGroup, Button } from "reactstrap";
 import { EntryComponent } from "./EntryComponent";
 import { PageSelectorComponent } from "./PageSelectorComponent";
 import moment from "moment";
@@ -11,6 +11,8 @@ import { Translation } from "react-i18next";
 import "../i18n/i18n";
 import IEntriesChangeListener from "../IEntriesChangeListener";
 import ImportPlaylistComponent from "./ImportPlaylistComponent";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons/faSync";
 
 
 interface EntriesStates extends AFetchStates {
@@ -78,13 +80,19 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
                         {this.state.entriesResult!.items}
                     </Badge>
                 </h1>
+                <ButtonGroup className="mb-3">
+                    <ImportPlaylistComponent {...this.props} />
+                    <Button color="secondary" onClick={this.refresh.bind(this)}>
+                        <FontAwesomeIcon icon={faSync} />
+                        {t("reload")}
+                    </Button>
+                </ButtonGroup>
                 <PageSelectorComponent
                     currentStart={entriesResult.offset}
                     elements={entriesResult.items}
                     pageSize={entriesResult.size}
                     onPageChange={this.onPageSelect}
                 />
-                <ImportPlaylistComponent {...this.props} />
                 <ListGroup>
                     {
                         entriesResult.entries.map(e =>
