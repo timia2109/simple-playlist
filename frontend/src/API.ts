@@ -45,7 +45,7 @@ export default class API {
     }
 
     async init() : Promise<void> {
-        this._info = await this.fetch("/api/info", "GET");
+        this._info = await this.fetch("api/info", "GET");
     }
 
     getTracks(page: number): Promise<EntryResult> {
