@@ -1,6 +1,6 @@
 import { DefaultComponentProps } from "../DefaultComponentProps";
 import React from "react";
-import { Input, InputGroupAddon, Button, InputGroup, ListGroup } from "reactstrap";
+import { Input, InputGroupAddon, Button, InputGroup, ListGroup, Card, CardHeader, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPlusCircle, faCheck, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import SpotifyWebApi from "spotify-web-api-node";
@@ -103,68 +103,73 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
 
         return <Translation>
             {
-                (t) => <>
-                    <h1>{t("addTracks")}</h1>
-                    <InputGroup className="mb-3">
-                        <Input
-                            type="text"
-                            value={this.state.query}
-                            onChange={this.onValueChange}
-                            placeholder={t("searchQueryPlaceholder")}
-                        />
-                        <InputGroupAddon addonType="append">
-                            <Button color="success" onClick={() => this.onSearchRequest()}>
-                                <FontAwesomeIcon icon={faSearch} />
-                                {t("search")}
-                            </Button>
-                        </InputGroupAddon>
-                    </InputGroup>
-                    {
-                        this.state.loading &&
-                        <LoadingComponent title={t("searchLoad")} />
-                    }
-                    {
-                        !this.state.loading && this.state.results.length > 0 &&
-                        <>
-                            <PageSelectorComponent
-                                currentStart={this.state.page}
-                                elements={this.state.searchResults}
-                                onPageChange={this.onSearchRequest}
-                                pageSize={SEARCH_LIMIT}
-                            />
-                            <ListGroup>
-                                {this.state.results.map(e =>
-                                    <EntryComponent
-                                        currentTrack={this.state.currentPlayingEntry}
-                                        track={e}
-                                        key={e.id}
-                                        onPlayRequest={this.onPlayTrack}
-                                    >
-                                        {this.state.alreadyVoted.has(e.id) &&
-                                            <Button color="primary" disabled>
-                                                <FontAwesomeIcon icon={faCheckCircle} />
-                                                {t("added")}
-                                            </Button>
-                                        }
-                                        {
-                                            !this.state.alreadyVoted.has(e.id) && <Button color="primary" onClick={() => this.onAddClick(e.id)}>
-                                                <FontAwesomeIcon icon={faPlusCircle} />
-                                                {t("add")}
-                                            </Button>
-                                        }
+                (t) =>
+                    <Card className="mb-3">
+                        <CardHeader tag="a3">
+                            {t("addTracks")}
+                        </CardHeader>
+                        <CardBody>
+                            <InputGroup className="mb-3">
+                                <Input
+                                    type="text"
+                                    value={this.state.query}
+                                    onChange={this.onValueChange}
+                                    placeholder={t("searchQueryPlaceholder")}
+                                />
+                                <InputGroupAddon addonType="append">
+                                    <Button color="success" onClick={() => this.onSearchRequest()}>
+                                        <FontAwesomeIcon icon={faSearch} />
+                                        {t("search")}
+                                    </Button>
+                                </InputGroupAddon>
+                            </InputGroup>
+                            {
+                                this.state.loading &&
+                                <LoadingComponent title={t("searchLoad")} />
+                            }
+                            {
+                                !this.state.loading && this.state.results.length > 0 &&
+                                <>
+                                    <PageSelectorComponent
+                                        currentStart={this.state.page}
+                                        elements={this.state.searchResults}
+                                        onPageChange={this.onSearchRequest}
+                                        pageSize={SEARCH_LIMIT}
+                                    />
+                                    <ListGroup>
+                                        {this.state.results.map(e =>
+                                            <EntryComponent
+                                                currentTrack={this.state.currentPlayingEntry}
+                                                track={e}
+                                                key={e.id}
+                                                onPlayRequest={this.onPlayTrack}
+                                            >
+                                                {this.state.alreadyVoted.has(e.id) &&
+                                                    <Button color="primary" disabled>
+                                                        <FontAwesomeIcon icon={faCheckCircle} />
+                                                        {t("added")}
+                                                    </Button>
+                                                }
+                                                {
+                                                    !this.state.alreadyVoted.has(e.id) && <Button color="primary" onClick={() => this.onAddClick(e.id)}>
+                                                        <FontAwesomeIcon icon={faPlusCircle} />
+                                                        {t("add")}
+                                                    </Button>
+                                                }
 
-                                    </EntryComponent>
-                                )}
-                            </ListGroup>
-                            <PageSelectorComponent
-                                currentStart={this.state.page}
-                                elements={this.state.searchResults}
-                                onPageChange={this.onSearchRequest}
-                                pageSize={SEARCH_LIMIT}
-                            />
-                        </>
-                    }
-                </>
+                                            </EntryComponent>
+                                        )}
+                                    </ListGroup>
+                                    <PageSelectorComponent
+                                        currentStart={this.state.page}
+                                        elements={this.state.searchResults}
+                                        onPageChange={this.onSearchRequest}
+                                        pageSize={SEARCH_LIMIT}
+                                    />
+                                </>
+                            }
+                        </CardBody>
+                    </Card>
             }
         </Translation>;
     }

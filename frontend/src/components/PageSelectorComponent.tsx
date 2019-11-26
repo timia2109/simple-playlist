@@ -40,7 +40,7 @@ type PageItem = {
 function getPageItems(props: PageSelectorProps): PageItem[] {
     let items: PageItem[] = [];
 
-    let showPages = 10;
+    let showPages = window.innerWidth < 768 ? 5 : 11 ;
 
     let labelIndex = Math.max(0, Math.floor(props.currentStart / props.pageSize) - 5);
     let itemsIndex = labelIndex * props.pageSize;

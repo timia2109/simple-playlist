@@ -33,7 +33,7 @@ export function EntryComponent(props: React.PropsWithChildren<EntryProps>) {
             <div className="media">
                 <img src={track.album.images[0].url} width="64" height="64" style={imageStyle} alt="Cover" />
                 <div className="media-body">
-                    <div className="d-flex w-100 justify-content-between">
+                    <div className="d-flex w-100 h-100 justify-content-between">
                         <h5 className="mt-0 mb-1">
                             <FontAwesomeIcon icon={faMusic} />
                             {track.name}

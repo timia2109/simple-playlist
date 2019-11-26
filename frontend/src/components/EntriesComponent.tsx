@@ -3,7 +3,7 @@ import { AFetchComponent, AFetchStates } from "./AFetchComponent";
 import { EntryResult } from "../../../backend/src/api/EntryResult";
 import { DefaultComponentProps } from "../DefaultComponentProps";
 import API from "../API";
-import { ListGroup, Badge, ButtonGroup, Button } from "reactstrap";
+import { ListGroup, Badge, ButtonGroup, Button, CardHeader, CardBody, Card } from "reactstrap";
 import { EntryComponent } from "./EntryComponent";
 import { PageSelectorComponent } from "./PageSelectorComponent";
 import moment from "moment";
@@ -71,64 +71,68 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
     protected renderWithData(): JSX.Element {
         let entriesResult = this.state.entriesResult!;
         return <Translation>
-            {(t) => <>
-                <h1>
-                    {t("votes")}
-                    <Badge
-                        hidden={this.state.entriesResult === undefined}
-                        color="primary"
-                        className="ml-3"
-                    >
-                        {entriesResult.items}
-                    </Badge>
-                </h1>
-                <ButtonGroup className="mb-3">
-                    <ImportPlaylistComponent {...this.props} />
-                    <Button color="secondary" onClick={this.refresh.bind(this)}>
-                        <FontAwesomeIcon icon={faSync} />
-                        {t("reload")}
-                    </Button>
-                </ButtonGroup>
-                <PageSelectorComponent
-                    currentStart={entriesResult.offset}
-                    elements={entriesResult.items}
-                    pageSize={entriesResult.size}
-                    onPageChange={this.onPageSelect}
-                />
-                <ListGroup>
-                    {
-                        entriesResult.entries.map(e =>
-                            <ConditionalDelTag
-                                condition={this.props.api.info.isAdmin && e.banned!}
-                                key={e.id}
-                            >
-                                <EntryComponent
-                                    track={e}
-                                    currentTrack={this.state.currentPlayingEntry}
-                                    onPlayRequest={this.onPlayTrack}
-                                    info={t("lastVote") + moment(e.lastVote).format("DD.MM.YYYY")}
-                                >
-                                    {this.props.api.info.isAdmin && e.banned !== true &&
-                                        <Button color="danger" onClick={() => this.props.api.deleteTrack(e.id)}>
-                                            <FontAwesomeIcon icon={faTrash} />
-                                        </Button>
-                                    }
-                                    {this.props.api.info.isAdmin && e.banned === true &&
-                                        <Button color="warning" onClick={() => this.props.api.undeleteTrack(e.id)}>
-                                            <FontAwesomeIcon icon={faTrashRestore} />
-                                        </Button>
-                                    }
-                                </EntryComponent>
-                            </ConditionalDelTag>)
-                    }
-                </ListGroup>
-                <PageSelectorComponent
-                    currentStart={entriesResult.offset}
-                    elements={entriesResult.items}
-                    pageSize={entriesResult.size}
-                    onPageChange={this.onPageSelect}
-                />
-            </>}
+            {(t) =>
+                <Card>
+                    <CardHeader tag="a3">
+                        {t("votes")}
+                        <Badge
+                            hidden={this.state.entriesResult === undefined}
+                            color="primary"
+                            className="ml-3"
+                        >
+                            {entriesResult.items}
+                        </Badge>
+                    </CardHeader>
+                    <CardBody>
+                        <ButtonGroup className="mb-3">
+                            <ImportPlaylistComponent {...this.props} />
+                            <Button color="secondary" onClick={this.refresh.bind(this)}>
+                                <FontAwesomeIcon icon={faSync} />
+                                {t("reload")}
+                            </Button>
+                        </ButtonGroup>
+                        <PageSelectorComponent
+                            currentStart={entriesResult.offset}
+                            elements={entriesResult.items}
+                            pageSize={entriesResult.size}
+                            onPageChange={this.onPageSelect}
+                        />
+                        <ListGroup>
+                            {
+                                entriesResult.entries.map(e =>
+                                    <ConditionalDelTag
+                                        condition={this.props.api.info.isAdmin && e.banned!}
+                                        key={e.id}
+                                    >
+                                        <EntryComponent
+                                            track={e}
+                                            currentTrack={this.state.currentPlayingEntry}
+                                            onPlayRequest={this.onPlayTrack}
+                                            info={t("lastVote") + moment(e.lastVote).format("DD.MM.YYYY")}
+                                        >
+                                            {this.props.api.info.isAdmin && e.banned !== true &&
+                                                <Button color="danger" onClick={() => this.props.api.deleteTrack(e.id)}>
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </Button>
+                                            }
+                                            {this.props.api.info.isAdmin && e.banned === true &&
+                                                <Button color="warning" onClick={() => this.props.api.undeleteTrack(e.id)}>
+                                                    <FontAwesomeIcon icon={faTrashRestore} />
+                                                </Button>
+                                            }
+                                        </EntryComponent>
+                                    </ConditionalDelTag>)
+                            }
+                        </ListGroup>
+                        <PageSelectorComponent
+                            currentStart={entriesResult.offset}
+                            elements={entriesResult.items}
+                            pageSize={entriesResult.size}
+                            onPageChange={this.onPageSelect}
+                        />
+                    </CardBody>
+                </Card>
+            }
         </Translation>;
     }
 
