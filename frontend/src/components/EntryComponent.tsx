@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import "../i18n/i18n";
 
 
-export interface EntryProps {
+export interface EntryProps  {
     track: SpotifyApi.TrackObjectFull;
     onPlayRequest?: TrackPlayRequestHandler;
     currentTrack?: SpotifyApi.TrackObjectFull;

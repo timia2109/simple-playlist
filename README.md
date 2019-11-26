@@ -37,6 +37,7 @@ The following variables are defined:
 |COLLECTION_NAME|Name of the MongoDB Collection *(default = entires)*|
 |TITLE|Branding of the App (example: "My Playlist", *default = Simple Playlist*)|
 |INFO|Infotext (appears as Alert. Spilt by `\n`, *default = ""*)|
+|ADMIN_SPOTIFY_IDS|Spotify Ids of users that are admins (can delete Tracks). Comma Seperated *(default = "")*|
 
 ## Develop
 Ensure you have NodeJS and MongoDB installed.

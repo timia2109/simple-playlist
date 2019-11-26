@@ -29,7 +29,7 @@ export default function submitTrack() : RequestHandler {
             });
         }
         else {
-            let api = await getSpotifyApi(env.clientId, env.clientSecret);
+            let api = await getSpotifyApi();
             let spotifyTrack = await api.getTrack(trackId);
     
             // Hide Market Fields
@@ -44,7 +44,7 @@ export default function submitTrack() : RequestHandler {
         }
     
         // Return all Tracks (for refresh)
-        res.send(await getTracks(0));
+        res.send({ok: true});
     }
     return handler;
 }

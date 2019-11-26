@@ -7,7 +7,7 @@ import {AppInfo} from "../../backend/src/api/AppInfo";
 import moment from "moment";
 
 // More are not nessessary on this app
-export type Method = "GET" | "POST";
+export type Method = "GET" | "POST" | "DELETE";
 
 export default class API {
 
@@ -63,6 +63,16 @@ export default class API {
             trackId: spotifyTrackId
         };
         return this.fetch("api/submit", "POST", body);
+    }
+
+    async deleteTrack(spotifyTrackId: string) : Promise<void> {
+        await this.fetch("api/tracks/" + spotifyTrackId, "DELETE");
+        this.notifyEntriesChange();
+    }
+
+    async undeleteTrack(spotifyTrackId: string) : Promise<void> {
+        await this.fetch("api/tracks/" + spotifyTrackId, "POST");
+        this.notifyEntriesChange();
     }
 
     getSpotifyAccessToken() : Promise<SpotifyAppToken> {

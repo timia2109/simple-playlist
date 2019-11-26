@@ -13,6 +13,8 @@ import IEntriesChangeListener from "../IEntriesChangeListener";
 import ImportPlaylistComponent from "./ImportPlaylistComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons/faSync";
+import { faTrash, faTrashRestore } from "@fortawesome/free-solid-svg-icons";
+import ConditionalDelTag from "./ConditionalDelTag";
 
 
 interface EntriesStates extends AFetchStates {
@@ -77,7 +79,7 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
                         color="primary"
                         className="ml-3"
                     >
-                        {this.state.entriesResult!.items}
+                        {entriesResult.items}
                     </Badge>
                 </h1>
                 <ButtonGroup className="mb-3">
@@ -96,13 +98,28 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
                 <ListGroup>
                     {
                         entriesResult.entries.map(e =>
-                            <EntryComponent
-                                track={e}
+                            <ConditionalDelTag
+                                condition={this.props.api.info.isAdmin && e.banned!}
                                 key={e.id}
-                                currentTrack={this.state.currentPlayingEntry}
-                                onPlayRequest={this.onPlayTrack}
-                                info={t("lastVote") + moment(e.lastVote).format("DD.MM.YYYY")}
-                            />)
+                            >
+                                <EntryComponent
+                                    track={e}
+                                    currentTrack={this.state.currentPlayingEntry}
+                                    onPlayRequest={this.onPlayTrack}
+                                    info={t("lastVote") + moment(e.lastVote).format("DD.MM.YYYY")}
+                                >
+                                    {this.props.api.info.isAdmin && e.banned !== true &&
+                                        <Button color="danger" onClick={() => this.props.api.deleteTrack(e.id)}>
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </Button>
+                                    }
+                                    {this.props.api.info.isAdmin && e.banned === true &&
+                                        <Button color="warning" onClick={() => this.props.api.undeleteTrack(e.id)}>
+                                            <FontAwesomeIcon icon={faTrashRestore} />
+                                        </Button>
+                                    }
+                                </EntryComponent>
+                            </ConditionalDelTag>)
                     }
                 </ListGroup>
                 <PageSelectorComponent

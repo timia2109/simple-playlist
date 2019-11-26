@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+
 export interface Enviroment {
     port: number;
     clientId: string;
@@ -65,8 +67,8 @@ const mapEnvVars : envDeclaration[] = [
     {
         name: "INFO",
         target: "info",
-        converter: (v) => v.split("\n").map(i => i.trim()),
-        default: ""
+        converter: (v) => v === null ? [] : v.split("\n").map(i => i.trim()),
+        default: null
     },
     {
         name: "ADMIN_SPOTIFY_IDS",
@@ -77,6 +79,7 @@ const mapEnvVars : envDeclaration[] = [
 ]
 
 function loadEnviroment() {
+    dotenv.config();
     let useEnv : any = {};
 
     for (let envVarDeclaration of mapEnvVars) {
@@ -107,5 +110,5 @@ export function getEnviroment() : Enviroment {
     if (enviroment === undefined) {
         loadEnviroment();
     }
-    return enviroment;
+    return enviroment as Enviroment;
 }

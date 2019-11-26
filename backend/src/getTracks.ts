@@ -3,30 +3,54 @@ import { EntryResult } from "./api/EntryResult";
 
 const PAGE_LIMIT = 20;
 
-export async function getTracks(offset: number) : Promise<EntryResult> {
-    let collection = await getCollection();
-    let count = await collection.countDocuments();
-    let entries = await collection
-        .aggregate([
-            {
-                $addFields: {
-                    "lastVote": {
-                        $max: "$votes.created"
-                    }
-                }
-            },
-            {
-                $sort: {
-                    lastVote: -1
-                }
-            },
-            {
-                $skip: offset
-            },
-            {
-                $limit: PAGE_LIMIT
+const DefaultAggregationOptions: any = [
+    // Hide Banned / Deleted Entries
+    {
+        $match: {
+            banned: {
+                $ne: true
             }
-        ])
+        }
+    }
+]
+
+export async function getTracks(offset: number, isAdmin: boolean) : Promise<EntryResult> {
+    let collection = await getCollection();
+
+    let count = await collection.find({
+        banned: {
+            $ne: true
+        }
+    }).count();
+
+    let aggregationOptions = [
+        {
+            $addFields: {
+                "lastVote": {
+                    $max: "$votes.created"
+                }
+            }
+        },
+        {
+            $sort: {
+                lastVote: -1
+            }
+        },
+        {
+            $skip: offset
+        },
+        {
+            $limit: PAGE_LIMIT
+        }
+    ];
+
+    // When user is adminm dont hide banned entries
+    if (!isAdmin) {
+        aggregationOptions = DefaultAggregationOptions.concat(aggregationOptions);
+    }
+
+    let entries = await collection
+        .aggregate(aggregationOptions)
         .toArray();
 
     return {
@@ -40,13 +64,13 @@ export async function getTracks(offset: number) : Promise<EntryResult> {
 export async function getAllTrackIds() : Promise<string[]> {
     let collection = await getCollection();
     let entries = await collection
-        .aggregate([
+        .aggregate(DefaultAggregationOptions.concat([
             {
                 $project: {
                     uri: 1
                 }
             }
-        ])
+        ]))
         .toArray();
 
     return entries.map(o => o.uri);
