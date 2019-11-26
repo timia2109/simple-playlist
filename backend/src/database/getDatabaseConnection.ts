@@ -20,9 +20,16 @@ const connect = async () => {
     database = client.db(dbName);
     await database.createCollection(collectionName);
     collection = database.collection<Entry>(collectionName);
+
+    // ID Index
     await collection.createIndex("id", {
         unique: true,
         name: "spotifyIdIndex"
+    });
+
+    await collection.createIndex("banned", {
+        unique: false,
+        name: "bannedEntryIndex"
     });
 
     console.log("Connected!");
