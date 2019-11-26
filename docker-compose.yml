@@ -1,0 +1,24 @@
+version: "2"
+services:
+  app:
+    container_name: simple-playlist-instance
+    restart: always
+    image: timia2109/simple-playlist
+    ports: 
+      - 3000:3000
+    depends_on:
+      - mongo
+    environment:
+      - PORT=3000
+      - DB=mongodb://mongo:27017
+      - CLIENT_ID=8b4835ee94844d39b80cfa559ff4a0cd
+      - CLIENT_SECRET=bc9f571a8f99455e8be99f6ec2b6c178
+      - URL=http://localhost:3000
+  
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - 27017:27017

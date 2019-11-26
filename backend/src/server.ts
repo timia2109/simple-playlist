@@ -2,7 +2,7 @@ import express, { static as staticFiles } from "express";
 import { json } from "body-parser";
 import getSpotifyAppToken from "./getSpotifyAppToken";
 import cookieParser from "cookie-parser";
-import {getTracks, getAllTrackIds} from "./getTracks";
+import { getTracks, getAllTrackIds } from "./getTracks";
 import submitTrack from "./api/submitTrack";
 import { loginHandler, loginSuccessHandler } from "./api/loginHandlers";
 import dotenv from "dotenv";
@@ -18,7 +18,10 @@ const app = express();
 //app.use(cors());
 app.use(json());
 app.use(cookieParser());
-app.use(staticFiles("../frontend/dist"));
+
+if (process.env.FILES) {
+    app.use(staticFiles(process.env.FILES));
+}
 
 // Fetch all Tracks
 app.get("/api/tracks", async (req, res) => {
@@ -28,7 +31,7 @@ app.get("/api/tracks", async (req, res) => {
 });
 
 // Fetch all TrackIds
-app.get("/api/tracks/ids", async (req,res) => {
+app.get("/api/tracks/ids", async (req, res) => {
     res.send(await getAllTrackIds());
 });
 
@@ -48,7 +51,7 @@ app.get("/api/login", loginHandler(clientId, clientSecret, url));
 // Login okay
 app.get("/api/login_callback", loginSuccessHandler(clientId, clientSecret, url));
 
-app.listen(port, ()=>{
+app.listen(port, () => {
     console.log(`Listen on Port ${port}`);
     console.log(`    with Root URI: ${url}`)
 });
