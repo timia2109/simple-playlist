@@ -1,6 +1,7 @@
 import { EntryResult } from "../../backend/src/api/EntryResult";
 import { SpotifyAppToken } from "../../backend/src/getSpotifyAppToken";
 import { UserToken } from "../../backend/src/database/UserToken";
+import MetaInfo from "../../backend/src/database/MetaInfo";
 import Cookies from "js-cookie";
 import IEntriesChangeListener from "./IEntriesChangeListener";
 import {AppInfo} from "../../backend/src/api/AppInfo";
@@ -46,6 +47,7 @@ export default class API {
 
     async init() : Promise<void> {
         this._info = await this.fetch("api/info", "GET");
+        document.getElementsByTagName("title")[0].innerText = this._info!.title;
     }
 
     getTracks(page: number): Promise<EntryResult> {
@@ -56,6 +58,10 @@ export default class API {
 
     getTrackIds() : Promise<string[]> {
         return this.fetch("api/tracks/ids", "GET");
+    }
+
+    getMetaInfo(): Promise<MetaInfo> {
+        return this.fetch("api/meta", "GET");
     }
 
     submitTrack(spotifyTrackId: string) : Promise<EntryResult> {
@@ -103,7 +109,7 @@ export default class API {
     }
 
     notifyEntriesChange() : void {
-        this.entriesChangeListener.forEach(l => l.reloadEntries());
+        this.entriesChangeListener.forEach(l => l.reload());
     }
 
 }

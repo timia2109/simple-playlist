@@ -27,5 +27,8 @@
     "allowDuplicates": "Doppelte Tracks erlauben",
     "reload": "Neu laden",
     "dateFormat": "DD.MM.YYYY HH:mm:ss",
-    "nVotes": "{{votes}} Stimmen"
+    "nVotes": "{{votes}} Stimmen",
+    "firstVoteMeta": "Erste Stimme (insgesamt)",
+    "lastVoteMeta": "Letzte Stimme (insgesamt)",
+    "totalLengthMeta": "Länge"
 }

@@ -2,7 +2,7 @@ import express, { static as staticFiles } from "express";
 import { json } from "body-parser";
 import getSpotifyAppToken from "./getSpotifyAppToken";
 import cookieParser from "cookie-parser";
-import { getTracks, getAllTrackIds } from "./getTracks";
+import { getTracks, getAllTrackIds, getMetaInfo } from "./getTracks";
 import submitTrack from "./api/submitTrack";
 import { loginHandler, loginSuccessHandler } from "./api/loginHandlers";
 import { getEnviroment } from "./Enviroment";
@@ -64,6 +64,11 @@ app.get("/api/info", async (req, res) => {
         info: env.info,
         isAdmin: await isAdmin(req.cookies["userToken"])
     });
+});
+
+// Meta Info (Track Length; firstVote...)
+app.get("/api/meta", async(req,res) => {
+    res.send(await getMetaInfo());
 });
 
 app.listen(

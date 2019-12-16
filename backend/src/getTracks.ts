@@ -1,5 +1,6 @@
 import getCollection from "./database/getDatabaseConnection";
 import { EntryResult } from "./api/EntryResult";
+import MetaInfo from "./database/MetaInfo";
 
 const PAGE_LIMIT = 20;
 
@@ -14,7 +15,7 @@ const DefaultAggregationOptions: any = [
     }
 ]
 
-export async function getTracks(offset: number, isAdmin: boolean) : Promise<EntryResult> {
+export async function getTracks(offset: number, isAdmin: boolean): Promise<EntryResult> {
     let collection = await getCollection();
 
     let count = await collection.find({
@@ -44,7 +45,7 @@ export async function getTracks(offset: number, isAdmin: boolean) : Promise<Entr
         }
     ];
 
-    // When user is adminm dont hide banned entries
+    // When user is admin dont hide banned entries
     if (!isAdmin) {
         aggregationOptions = DefaultAggregationOptions.concat(aggregationOptions);
     }
@@ -61,7 +62,7 @@ export async function getTracks(offset: number, isAdmin: boolean) : Promise<Entr
     }
 }
 
-export async function getAllTrackIds() : Promise<string[]> {
+export async function getAllTrackIds(): Promise<string[]> {
     let collection = await getCollection();
     let entries = await collection
         .aggregate(DefaultAggregationOptions.concat([
@@ -74,4 +75,29 @@ export async function getAllTrackIds() : Promise<string[]> {
         .toArray();
 
     return entries.map(o => o.uri);
+}
+
+export async function getMetaInfo(): Promise<MetaInfo> {
+    const collection = await getCollection();
+    const results = await collection.aggregate<MetaInfo>(
+        [
+            {
+                $unwind: '$votes'
+            }, {
+                $group: {
+                    '_id': 'MetaInfo',
+                    'lastVote': {
+                        '$max': '$votes.created'
+                    },
+                    'firstVote': {
+                        '$min': '$votes.created'
+                    },
+                    'trackLengthMs': {
+                        '$sum': '$duration_ms'
+                    }
+                }
+            }
+        ]
+    ).toArray();
+    return results[0];
 }

@@ -9,7 +9,24 @@ export interface AFetchStates {
 
 export abstract class AFetchComponent<P extends DefaultComponentProps, S extends AFetchStates> extends React.Component<P, S>  {
     
+    protected autoLoad: boolean = false;
+
     public componentDidMount() {
+        this.refresh();
+
+        if (this.autoLoad) {
+            this.props.api.attach(this);
+        }
+    }
+
+    public componentWillUnmount() {
+        if (this.autoLoad) {
+            this.props.api.detach(this);
+        }
+    }
+
+    // Secound method to overload
+    public reload() {
         this.refresh();
     }
 

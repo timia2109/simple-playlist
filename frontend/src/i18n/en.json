@@ -27,5 +27,8 @@
     "allowDuplicates": "Allow duplicates",
     "reload": "Reload List",
     "dateFormat": "DD.MM.YYYY hh:mm:ss a",
-    "nVotes": "{{votes}} votes"
+    "nVotes": "{{votes}} votes",
+    "firstVoteMeta": "First Vote",
+    "lastVoteMeta": "Last Vote",
+    "totalLengthMeta": "Total Length"
 }
