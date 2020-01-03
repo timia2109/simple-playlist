@@ -42,6 +42,7 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
         this.onValueChange = this.onValueChange.bind(this);
         this.onSearchRequest = this.onSearchRequest.bind(this);
         this.onPlayTrack = this.onPlayTrack.bind(this);
+        this.onInputKeyPress = this.onInputKeyPress.bind(this);
 
         this.spotifyApi = new SpotifyWebApi({});
         this.spotifyApi.setAccessToken(this.props.spotifyToken.access_token);
@@ -49,6 +50,13 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
 
     componentDidUpdate() {
         this.spotifyApi.setAccessToken(this.props.spotifyToken.access_token);
+    }
+
+    onInputKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
+        if (event.key === "Enter") {
+            this.onSearchRequest();
+            event.currentTarget.blur();
+        }
     }
 
     onPlayTrack(entry?: SpotifyApi.TrackObjectFull) {
@@ -115,6 +123,7 @@ export default class SeekComponent extends React.Component<DefaultComponentProps
                                     value={this.state.query}
                                     onChange={this.onValueChange}
                                     placeholder={t("searchQueryPlaceholder")}
+                                    onKeyPress={this.onInputKeyPress}
                                 />
                                 <InputGroupAddon addonType="append">
                                     <Button color="success" onClick={() => this.onSearchRequest()}>
