@@ -154,7 +154,7 @@ export class EntriesComponent extends AFetchComponent<DefaultComponentProps, Ent
                             <MetaElementComponent i18nTitleId="lastVoteMeta" value={meta.lastVote} isDate />
                             <MetaElementComponent i18nTitleId="totalLengthMeta" value={totalLength} />
                         </tbody>
-                    </Table>;
+                    </Table>
                 </>
             }
         </Translation>;
