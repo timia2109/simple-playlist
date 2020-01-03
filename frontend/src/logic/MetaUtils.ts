@@ -11,7 +11,8 @@ export function humanizeMs(ms: number): string {
 
     // Only support H:m:s now
     // I think more is not required
-    append(duration.hours());
+    // Overflow Hours Fix
+    append(Math.floor(duration.asHours()));
     append(duration.minutes());
     append(duration.seconds());
 
